@@ -10,6 +10,21 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class LayerDecoratorTest {
     @Test
+    void moyenneStatistiqueResteFiniePourDesSortiesFiniesExtremes() {
+        var network = new NetworkBuilder().input(1).output(3, Type.IDENTITY).build();
+        network.decorateLayer(1, StatisticsLayerDecorator::new);
+        var stats = (StatisticsLayerDecorator) network.layers().getLast();
+        double max = Double.MAX_VALUE;
+        stats.activate(new double[]{max, max, max});
+        assertEquals(max, stats.statistics().lastMean());
+        stats.activate(new double[]{max, -max, 0});
+        assertEquals(0, stats.statistics().lastMean());
+        stats.activate(new double[]{0, 0, 0});
+        assertEquals(0, stats.statistics().lastMean());
+        assertEquals(3, stats.statistics().evaluations());
+    }
+
+    @Test
     void coucheValideLesDimensionsEtIndicesDuMemeContrat() {
         var network = new NetworkBuilder().input(1).output(2, Type.IDENTITY).build();
         var layer = network.layers().getLast();

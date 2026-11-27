@@ -16,17 +16,31 @@ public final class StatisticsLayerDecorator extends LayerDecorator {
         double[] output = super.activate(sums);
         double min = Double.POSITIVE_INFINITY;
         double max = Double.NEGATIVE_INFINITY;
-        double mean = 0;
+        double scale = 0;
         for (double value : output) {
             if (!Double.isFinite(value)) {
                 throw new ArithmeticException("Sortie de couche non finie.");
             }
             min = Math.min(min, value);
             max = Math.max(max, value);
-            mean += value / output.length;
+            scale = Math.max(scale, Math.abs(value));
         }
+        double mean = scaledMean(output, scale);
         statistics = new Statistics(statistics.evaluations() + 1, min, max, mean);
         return output;
+    }
+
+    /** Normaliser avant la somme evite le debordement de valeurs finies proches de MAX_VALUE. */
+    private static double scaledMean(double[] values, double scale) {
+        if (scale == 0) {
+            return 0;
+        }
+        double normalizedSum = 0;
+        for (double value : values) {
+            normalizedSum += value / scale;
+        }
+        double normalizedMean = Math.max(-1, Math.min(1, normalizedSum / values.length));
+        return scale * normalizedMean;
     }
 
     public Statistics statistics() { return statistics; }
