@@ -13,6 +13,21 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.junit.jupiter.api.Assertions.*;
 
 class NetworkTest {
+    @Test
+    void builderValideAvantMutationEtPeutConstruireDesReseauxIndependants() {
+        var builder = new NetworkBuilder().input(1).seed(17);
+        assertThrows(IllegalArgumentException.class, () -> builder.hidden(0, Type.IDENTITY));
+        assertThrows(NullPointerException.class, () -> builder.hidden(1, null));
+        builder.output(1, Type.IDENTITY);
+        var first = builder.build();
+        var second = builder.build();
+        assertEquals(2, first.layers().size());
+        assertNotSame(first, second);
+        assertNotSame(first.layers().getFirst().neurons().getFirst(),
+                second.layers().getFirst().neurons().getFirst());
+        assertEquals(first.connections().getFirst().weight(), second.connections().getFirst().weight());
+    }
+
     private NeuralNetwork linear() {
         return new NetworkBuilder().input(2).output(1, Type.IDENTITY).seed(7).build();
     }

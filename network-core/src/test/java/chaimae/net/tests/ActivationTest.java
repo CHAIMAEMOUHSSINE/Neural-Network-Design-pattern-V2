@@ -8,6 +8,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ActivationTest {
     @Test
+    void fabriqueSignaleExplicitementUnTypeAbsent() {
+        var error = assertThrows(NullPointerException.class, () -> ActivationFactory.create(null));
+        assertEquals("Le type d'activation est requis.", error.getMessage());
+    }
+
+    @Test
     void adaptateurAccepteTouteImplementationDuContratHistorique() {
         var adapter = new LegacyActivationAdapter(new LegacyActivation() {
             @Override public double calculer(double value) { return 2 * value; }

@@ -4,10 +4,18 @@ import chaimae.net.activation.ActivationFactory;
 import chaimae.net.activation.ActivationFactory.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /** Builder : assemble des couches et centralise le câblage complet reproductible. */
 public final class NetworkBuilder {
     private record Specification(LayerType type, int count, Type activation) {
+        private Specification {
+            Objects.requireNonNull(type, "Le type de couche est requis.");
+            Objects.requireNonNull(activation, "Le type d'activation est requis.");
+            if (count < 1) {
+                throw new IllegalArgumentException("Une couche doit contenir au moins un neurone.");
+            }
+        }
     }
 
     private final List<Specification> specifications = new ArrayList<>();
