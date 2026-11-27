@@ -27,9 +27,7 @@ public final class Layer implements LayerComponent {
 
     @Override
     public double[] activate(double[] sums) {
-        if (sums.length != neurons.size()) {
-            throw new IllegalArgumentException("Dimension de couche incorrecte.");
-        }
+        requireDimension(sums);
         double[] output = new double[sums.length];
         for (Neuron neuron : neurons) {
             output[neuron.index()] = neuron.activation().activate(sums, neuron.index());
@@ -39,6 +37,16 @@ public final class Layer implements LayerComponent {
 
     @Override
     public double derivative(double[] sums, int outputIndex, int inputIndex) {
+        requireDimension(sums);
+        Objects.checkIndex(outputIndex, neurons.size());
+        Objects.checkIndex(inputIndex, neurons.size());
         return neurons.get(outputIndex).activation().derivative(sums, outputIndex, inputIndex);
+    }
+
+    private void requireDimension(double[] sums) {
+        Objects.requireNonNull(sums, "Le vecteur des sommes est requis.");
+        if (sums.length != neurons.size()) {
+            throw new IllegalArgumentException("Dimension de couche incorrecte.");
+        }
     }
 }

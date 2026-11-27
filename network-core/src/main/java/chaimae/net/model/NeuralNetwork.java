@@ -57,9 +57,7 @@ public final class NeuralNetwork {
         state.requireConfiguration();
         Objects.requireNonNull(type);
         Objects.requireNonNull(activation);
-        if (layers.isEmpty() && type != LayerType.INPUT
-                || !layers.isEmpty() && type == LayerType.INPUT
-                || !layers.isEmpty() && layers.getLast().type() == LayerType.OUTPUT) {
+        if (!acceptsLayer(type)) {
             throw new IllegalArgumentException("Ordre requis : INPUT, HIDDEN*, OUTPUT.");
         }
         if (type == LayerType.INPUT && !(activation instanceof Identity)) {
@@ -67,6 +65,13 @@ public final class NeuralNetwork {
         }
         layers.add(new Layer(type, count, activation));
         invalidate();
+    }
+
+    private boolean acceptsLayer(LayerType type) {
+        if (layers.isEmpty()) {
+            return type == LayerType.INPUT;
+        }
+        return type != LayerType.INPUT && layers.getLast().type() != LayerType.OUTPUT;
     }
 
     @RequiresRole(Role.CONFIGURE)

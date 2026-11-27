@@ -14,6 +14,24 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class NetworkTest {
     @Test
+    void ordreDesCouchesEstValideSansMutationSurRejet() {
+        var network = new NeuralNetwork();
+        assertThrows(IllegalArgumentException.class,
+                () -> network.addLayer(LayerType.HIDDEN, 1, new Identity()));
+        assertTrue(network.layers().isEmpty());
+        network.addLayer(LayerType.INPUT, 1, new Identity());
+        assertThrows(IllegalArgumentException.class,
+                () -> network.addLayer(LayerType.INPUT, 1, new Identity()));
+        assertEquals(1, network.layers().size());
+        network.addLayer(LayerType.OUTPUT, 1, new Identity());
+        assertThrows(IllegalArgumentException.class,
+                () -> network.addLayer(LayerType.HIDDEN, 1, new Identity()));
+        assertEquals(2, network.layers().size());
+        network.connectFully(42);
+        assertEquals(1, network.connections().size());
+    }
+
+    @Test
     void builderValideAvantMutationEtPeutConstruireDesReseauxIndependants() {
         var builder = new NetworkBuilder().input(1).seed(17);
         assertThrows(IllegalArgumentException.class, () -> builder.hidden(0, Type.IDENTITY));

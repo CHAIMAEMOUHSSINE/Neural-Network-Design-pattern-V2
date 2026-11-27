@@ -9,6 +9,18 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class LayerDecoratorTest {
+    @Test
+    void coucheValideLesDimensionsEtIndicesDuMemeContrat() {
+        var network = new NetworkBuilder().input(1).output(2, Type.IDENTITY).build();
+        var layer = network.layers().getLast();
+        assertThrows(NullPointerException.class, () -> layer.activate(null));
+        assertThrows(IllegalArgumentException.class, () -> layer.activate(new double[]{1}));
+        assertThrows(IllegalArgumentException.class, () -> layer.derivative(new double[]{1}, 0, 0));
+        assertThrows(IndexOutOfBoundsException.class, () -> layer.derivative(new double[]{1, 2}, 0, 2));
+        assertThrows(IndexOutOfBoundsException.class, () -> layer.derivative(new double[]{1, 2}, -1, 0));
+        assertArrayEquals(new double[]{1, 2}, layer.activate(new double[]{1, 2}));
+    }
+
     private NeuralNetwork network() {
         var network = new NetworkBuilder().input(1).hidden(1, Type.IDENTITY).output(1, Type.IDENTITY).build();
         network.setWeight(0, 0.4);
