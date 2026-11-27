@@ -2,16 +2,15 @@
 
 Solution Java du PDF **Examen Design Pattern V2** : réseau feed-forward avec **biais entraînables**, apprentissage réel, **Strategy, Adapter, State, Observer, Decorator**, complétés par **Builder** et **Simple Factory**.
 
-Cette version utilise le package **`chaimae.net`** et le dépôt dédié [Neural-Network-Design-pattern-V2](https://github.com/CHAIMAEMOUHSSINE/Neural-Network-Design-pattern-V2). La version précédente reste conservée dans son dépôt d'origine.
+Package Java : **`chaimae.net`**.
 
-## Livrables
+## Organisation
 
-- [Rapport PDF](dist/RAPPORT.pdf) : conception, diagrammes UML, code, tests et limites.
-- [Rapport Markdown](RAPPORT.md).
-- [Archive ZIP V2 à remettre](dist/Examen-Reseau-Neurones-AOP-V2.zip).
-- Diagrammes : [docs/diagrammes.md](docs/diagrammes.md) et PNG dans `docs/`.
 - Modèle indépendant : `network-core/`.
 - Aspects de journalisation et sécurité : `network-aop/`.
+- Tests JUnit : `src/test/java/` dans chaque module.
+
+Le dépôt publie le code, les tests et les fichiers Maven nécessaires. Les rapports, archives et outils locaux de génération ne sont pas suivis par Git.
 
 ## Compilation et tests
 
@@ -34,8 +33,6 @@ Sous Linux/macOS : `sh mvnw clean verify`.
 - e : Decorator — `LayerComponent`, `LayerDecorator`, statistiques et mise à l'échelle.
 - f : `LoggingAspect` — méthodes applicatives, y compris privées et décorateurs.
 - g : `SecurityAspect` — authentification et contrôle des rôles sur le réseau.
-
-Les diagrammes, extraits Java et tests commentés sont inclus dans le rapport. Les sources compilables complètes sont dans le ZIP.
 
 ## Enrichir une couche dynamiquement
 
@@ -96,27 +93,8 @@ Le module `network-core` n'applique pas la sécurité : ses annotations sont ine
 
 Il ne s'agit pas d'un apprentissage XOR : les contraintes de poids positifs bornés limitent toujours les fonctions représentables.
 
-## Régénérer le PDF et le ZIP
-
-```powershell
-python -m pip install -r tools/requirements-report.txt
-python tools/build_deliverables.py
-```
-
-Faire d'abord `.\mvnw.cmd clean verify` pour inclure des résultats de tests à jour. Le script exclut `.git`, `target`, les journaux et les archives ZIP de l'archive finale. Il ajoute une copie des résultats JUnit dans `docs/resultats-tests.json`.
-
-## Publication
-
-- Ce projet V2 : [Neural-Network-Design-pattern-V2](https://github.com/CHAIMAEMOUHSSINE/Neural-Network-Design-pattern-V2).
-- Dépôt d'origine (version antérieure) : [Neural-Network-design-patterns](https://github.com/CHAIMAEMOUHSSINE/Neural-Network-design-patterns).
-- Activité AOP séparée : [Aspect-oriented-Programming-demo-](https://github.com/CHAIMAEMOUHSSINE/Aspect-oriented-Programming-demo-).
-
-Les PDF et ZIP de la V2 sont disponibles dans `dist/` sur la branche `main` du dépôt dédié.
-
 ## Limites
 
 Projet pédagogique synchrone, sans interface graphique, sans base de données ni session réseau. L'authentification est locale en mémoire ; l'inscription est du bootstrap de confiance, sans durcissement de production.
 
-Les droits protègent les méthodes du réseau, pas l'exécution de code Java hostile détenant déjà des références. L'inscription des observateurs n'est pas une garantie de concurrence. Une exception d'observateur de type `RuntimeException` est isolée et comptabilisée ; une erreur fatale n'est pas promise comme récupérable.
-
-Les classes d'activation peuvent être réutilisées hors réseau ; le réseau valide les dimensions et les valeurs avant de les appeler. La modification d'une activation ou d'un poids invalide un réseau entraîné et exige un nouvel apprentissage.
+Les droits protègent les méthodes du réseau, pas une JVM exécutant du code hostile. Une RuntimeException d'observateur est isolée, pas une erreur fatale. Toute reconfiguration exige un nouvel entraînement.

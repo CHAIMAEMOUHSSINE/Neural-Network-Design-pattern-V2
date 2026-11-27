@@ -3,4 +3,10 @@
 *.iml
 *.log*
 __pycache__/
-dist/*.zip
+/dist/
+**/node_modules/
+/docs/
+/tools/
+/RAPPORT.md
+/verification/
+/diagrammes/

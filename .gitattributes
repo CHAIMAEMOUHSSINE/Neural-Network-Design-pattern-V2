@@ -6,5 +6,6 @@
 *.cmd text eol=crlf
 mvnw text eol=lf
 *.pdf binary
+*.docx binary
 *.png binary
 *.zip binary
