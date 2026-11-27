@@ -1,12 +1,14 @@
-# Examen — Réseau de neurones, Design Patterns et AOP
+# Examen V2 — Réseau de neurones, Design Patterns et AOP
 
-Implémentation Java de l'énoncé transmis en deux captures : réseau feed-forward, apprentissage réel, **Strategy, Adapter, State, Observer**, complétés par **Builder** et **Simple Factory**.
+Solution Java du PDF **Examen Design Pattern V2** : réseau feed-forward avec **biais entraînables**, apprentissage réel, **Strategy, Adapter, State, Observer, Decorator**, complétés par **Builder** et **Simple Factory**.
+
+Cette version utilise le package **`chaimae.net`** et la branche [examen-v2](https://github.com/CHAIMAEMOUHSSINE/Neural-Network-design-patterns/tree/examen-v2). La version précédente publiée sur `main` reste inchangée.
 
 ## Livrables
 
 - [Rapport PDF](dist/RAPPORT.pdf) : conception, diagrammes UML, code, tests et limites.
 - [Rapport Markdown](RAPPORT.md).
-- [Archive ZIP à remettre](dist/Examen-Reseau-Neurones-AOP.zip).
+- [Archive ZIP V2 à remettre](dist/Examen-Reseau-Neurones-AOP-V2.zip).
 - Diagrammes : [docs/diagrammes.md](docs/diagrammes.md) et PNG dans `docs/`.
 - Modèle indépendant : `network-core/`.
 - Aspects de journalisation et sécurité : `network-aop/`.
@@ -21,7 +23,32 @@ JDK **21 ou supérieur** et Internet au premier lancement. Le Maven Wrapper tél
 
 Sous Linux/macOS : `sh mvnw clean verify`.
 
-Les tests couvrent les calculs, la Jacobienne Softmax, l'apprentissage, les états, les notifications, les poids bornés, les erreurs numériques, les droits et la journalisation.
+**53 tests passent** : 8 activations, 16 réseau, 9 biais, 10 décorateurs et 10 aspects. Ils couvrent aussi les gradients des décorateurs, les biais, la reprise sur panne et le refus des nouvelles mutations sans le rôle CONFIGURE.
+
+## Correspondance avec les consignes a–g
+
+- a : Strategy — `ActivationFunction`, Identity, Sigmoid et Softmax.
+- b : Adapter — `LegacyActivationAdapter` adapte l'interface scalaire `LegacyActivation`.
+- c : State — Construction, Training et Trained ; `predict` après apprentissage seulement.
+- d : Observer — `NetworkObserver`, `Dashboard`, historique et statistiques d'états.
+- e : Decorator — `LayerComponent`, `LayerDecorator`, statistiques et mise à l'échelle.
+- f : `LoggingAspect` — méthodes applicatives, y compris privées et décorateurs.
+- g : `SecurityAspect` — authentification et contrôle des rôles sur le réseau.
+
+Les diagrammes, extraits Java et tests commentés sont inclus dans le rapport. Les sources compilables complètes sont dans le ZIP.
+
+## Enrichir une couche dynamiquement
+
+```java
+network.decorateLayer(1, layer -> new ScalingLayerDecorator(layer, 1.1));
+network.decorateLayer(1, StatisticsLayerDecorator::new);
+// Après un nouvel entraînement :
+var stats = (StatisticsLayerDecorator) network.layers().get(1);
+System.out.println(stats.statistics());
+network.undecorateLayer(1); // retire l'enveloppe extérieure et invalide Trained
+```
+
+Toutes les couches, y compris l'entrée, peuvent être décorées. Les décorateurs ne dupliquent pas les neurones. La mise à l'échelle adapte aussi les dérivées ; elle est refusée sur Softmax si son facteur diffère de 1. Toute reconfiguration demande un nouvel entraînement ; elle est interdite pendant Training.
 
 ## Démonstrations
 
@@ -34,13 +61,13 @@ Installer d'abord les deux modules dans le dépôt Maven local :
 Modèle sans aspects :
 
 ```powershell
-.\mvnw.cmd -pl network-core exec:java "-Dexec.mainClass=fr.enset.nn.demo.DemoModele"
+.\mvnw.cmd -pl network-core exec:java "-Dexec.mainClass=chaimae.net.demo.DemoModele"
 ```
 
 Scénario avec les véritables classes tissées par AspectJ :
 
 ```powershell
-.\mvnw.cmd -pl network-aop exec:java "-Dexec.mainClass=fr.enset.nn.demo.DemoSecurisee"
+.\mvnw.cmd -pl network-aop exec:java "-Dexec.mainClass=chaimae.net.demo.DemoSecurisee"
 ```
 
 Cette seconde démonstration refuse un utilisateur anonyme, autorise l'administrateur, puis refuse la prédiction au lecteur. Comptes **fictifs** `admin` / `lecteur`, mot de passe local `Demo-2027!`.
@@ -56,16 +83,18 @@ Le module `network-core` n'applique pas la sécurité : ses annotations sont ine
 - `predict` n'est possible qu'en état `Trained`.
 - Chaque neurone possède une stratégie ; Softmax reçoit le vecteur de sa couche et doit couvrir toute cette couche.
 - Poids dans **[0,1]**, y compris après apprentissage ; projection après chaque mise à jour.
-- Réseau dense acyclique, connexions entre couches consécutives, sans biais ni entraînement récurrent.
+- Réseau dense acyclique, connexions entre couches consécutives, sans entraînement récurrent.
+- Biais initialisés à zéro, réels finis et entraînables hors couche d'entrée. L'entrée conserve des biais nuls et une activation de base Identity.
+- Les statistiques des couches comptent les évaluations, pas les epochs ; elles ne sont pas annulées lors d'une restauration des paramètres.
 
 ## Résultats numériques de la démonstration
 
 - Architecture **3–5–2** : **25 connexions**.
-- Sortie Softmax : environ `[0.775543, 0.224457]`.
-- Apprentissage de `y = 0.25*x1 + 0.75*x2` : perte finale de l'ordre de `1e-20` sur les exemples.
-- Prédiction pour `[0.4, 0.8]` : environ **0.7**.
+- Sortie Softmax avec couche cachée décorée : environ `[0.805730, 0.194270]`.
+- Apprentissage de `y = 0.6*x - 0.4` : poids **0.6**, biais **-0.4**, perte finale environ `8.47e-32`.
+- Prédiction pour `[1.5]` : environ **0.5**.
 
-Il ne s'agit pas d'un apprentissage XOR : les contraintes de poids positifs et l'absence de biais limitent les fonctions représentables.
+Il ne s'agit pas d'un apprentissage XOR : les contraintes de poids positifs bornés limitent toujours les fonctions représentables.
 
 ## Régénérer le PDF et le ZIP
 
@@ -78,10 +107,10 @@ Faire d'abord `.\mvnw.cmd clean verify` pour inclure des résultats de tests à 
 
 ## Publication
 
-- Ce projet : [Neural-Network-design-patterns](https://github.com/CHAIMAEMOUHSSINE/Neural-Network-design-patterns).
+- Dépôt d'origine (version antérieure) : [Neural-Network-design-patterns](https://github.com/CHAIMAEMOUHSSINE/Neural-Network-design-patterns).
 - Activité AOP séparée : [Aspect-oriented-Programming-demo-](https://github.com/CHAIMAEMOUHSSINE/Aspect-oriented-Programming-demo-).
 
-Aucun ancien projet de dessins n'a été remplacé. Les PDF et ZIP sont disponibles dans `dist/`.
+La [V2 est disponible sur sa branche dédiée](https://github.com/CHAIMAEMOUHSSINE/Neural-Network-design-patterns/tree/examen-v2). Ses PDF et ZIP sont disponibles dans `dist/`.
 
 ## Limites
 

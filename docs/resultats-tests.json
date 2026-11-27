@@ -1,17 +1,17 @@
 {
-  "generated_at_utc": "2026-11-19T11:22:01.732269+00:00",
+  "generated_at_utc": "2026-11-27T10:16:43.806878+00:00",
   "note": "Local Surefire results, not a code coverage measurement.",
   "totals": {
-    "tests": 31,
+    "tests": 53,
     "failures": 0,
     "errors": 0,
     "skipped": 0
   },
   "suites": [
     {
-      "suite": "fr.enset.nn.tests.AspectsTest",
-      "source": "network-aop/target/surefire-reports/TEST-fr.enset.nn.tests.AspectsTest.xml",
-      "tests": 8,
+      "suite": "chaimae.net.tests.AspectsTest",
+      "source": "network-aop/target/surefire-reports/TEST-chaimae.net.tests.AspectsTest.xml",
+      "tests": 10,
       "failures": 0,
       "errors": 0,
       "skipped": 0,
@@ -20,16 +20,18 @@
         "utilisateurAnonymeNePeutPasConstruireNiLireLeReseau",
         "administrateurExecuteEntrainementEtPrediction",
         "toutesLesOperationsPubliquesDuReseauSontAnnotees",
+        "auditCouvreLesDecorateursV2EtLesMutationsDeBiais",
         "deconnexionEtIsolationEntreThreads",
         "tracesAvantApresDureeErreurEtAbsenceDeMotDePasse",
         "journalisationCouvreAussiLesMethodesPrivees",
-        "mauvaisMotDePasseEffaceLaSessionPrecedente"
+        "mauvaisMotDePasseEffaceLaSessionPrecedente",
+        "nouveauxPointsEntreeV2SontProtegesParLeTissage"
       ]
     },
     {
-      "suite": "fr.enset.nn.tests.ActivationTest",
-      "source": "network-core/target/surefire-reports/TEST-fr.enset.nn.tests.ActivationTest.xml",
-      "tests": 7,
+      "suite": "chaimae.net.tests.ActivationTest",
+      "source": "network-core/target/surefire-reports/TEST-chaimae.net.tests.ActivationTest.xml",
+      "tests": 8,
       "failures": 0,
       "errors": 0,
       "skipped": 0,
@@ -39,13 +41,53 @@
         "jacobienneSoftmaxCorrespondAuxDifferencesFinies(int)[2]",
         "jacobienneSoftmaxCorrespondAuxDifferencesFinies(int)[3]",
         "identityEtAdaptateurRespectentLeurContrat",
+        "adaptateurAccepteTouteImplementationDuContratHistorique",
         "fabriqueCreeLesQuatreStrategies",
         "sigmoidUtiliseLaFormuleCorrigeeEtResteStable"
       ]
     },
     {
-      "suite": "fr.enset.nn.tests.NetworkTest",
-      "source": "network-core/target/surefire-reports/TEST-fr.enset.nn.tests.NetworkTest.xml",
+      "suite": "chaimae.net.tests.BiasTest",
+      "source": "network-core/target/surefire-reports/TEST-chaimae.net.tests.BiasTest.xml",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "echecApresUneMiseAJourRestaureAussiLesBiais",
+        "propagationAjouteLeBiaisALaSommePonderee",
+        "leBiaisNePeutPasChangerPendantTraining",
+        "changerLeBiaisInvalideLeModele",
+        "rejetteUnBiaisNonFini(double)[1]",
+        "rejetteUnBiaisNonFini(double)[2]",
+        "rejetteUnBiaisNonFini(double)[3]",
+        "chaqueNeuronePossedeUnBiaisInitialementNul",
+        "apprendUneRelationAffineAvecOrdonnéeALOrigineNonNulle"
+      ]
+    },
+    {
+      "suite": "chaimae.net.tests.LayerDecoratorTest",
+      "source": "network-core/target/surefire-reports/TEST-chaimae.net.tests.LayerDecoratorTest.xml",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "scalingParticipeAuCalculEtALaRetropropagationDesPoidsEtBiais",
+        "unDepassementDansUnDecorateurRestaureLesParametres",
+        "deriveeDuDecorateurCorrespondAuxDifferencesFinies",
+        "refuseUneDecorationPendantTraining",
+        "laCoucheEntreePeutAussiEtreDecoree",
+        "empileEtRetireDesDecorateursSansDupliquerLesNeurones",
+        "refuseUnComposantEtrangerOuUneFausseDecoration",
+        "valideLeFacteurEtPreserveLaNormalisationSoftmax",
+        "statistiquesNeChangentNiLaPredictionNiLesGradients",
+        "changementDynamiqueInvalideLeStatutTrained"
+      ]
+    },
+    {
+      "suite": "chaimae.net.tests.NetworkTest",
+      "source": "network-core/target/surefire-reports/TEST-chaimae.net.tests.NetworkTest.xml",
       "tests": 16,
       "failures": 0,
       "errors": 0,

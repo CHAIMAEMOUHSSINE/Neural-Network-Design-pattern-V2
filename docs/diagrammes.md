@@ -1,4 +1,4 @@
-# Diagrammes UML
+# Diagrammes UML — Examen V2
 
 Les PNG du rapport sont générés à partir de la même conception ; Mermaid fournit ici une version textuelle lisible sur GitHub.
 
@@ -11,9 +11,15 @@ classDiagram
         +predict(double[]) double[]
         +subscribe(NetworkObserver) void
         +setActivation(int, int, ActivationFunction) void
+        +setBias(int, int, double) void
+        +decorateLayer(int, UnaryOperator) void
+        +undecorateLayer(int) void
     }
     class Layer { -LayerType type }
-    class Neuron { -int index }
+    class Neuron {
+        -int index
+        -double bias
+    }
     class Connection { -double weight }
     class ActivationFunction {
         <<interface>>
@@ -25,6 +31,22 @@ classDiagram
     class Softmax
     class LegacyActivationAdapter
     class AncienneFonctionTanh
+    class LegacyActivation {
+        <<interface>>
+        +calculer(double) double
+        +derivee(double) double
+    }
+    class LayerComponent {
+        <<interface>>
+        +activate(double[]) double[]
+        +derivative(double[], int, int) double
+    }
+    class LayerDecorator {
+        <<abstract>>
+        -LayerComponent component
+    }
+    class StatisticsLayerDecorator
+    class ScalingLayerDecorator
     class NetworkState {
         <<interface>>
         +requireTraining() void
@@ -37,7 +59,12 @@ classDiagram
     class Dashboard
     class NetworkBuilder
     class ActivationFactory
-    NeuralNetwork *-- "2..*" Layer
+    NeuralNetwork *-- "2..*" LayerComponent
+    LayerComponent <|.. Layer
+    LayerComponent <|.. LayerDecorator
+    LayerDecorator --> "1" LayerComponent : enveloppe
+    LayerDecorator <|-- StatisticsLayerDecorator
+    LayerDecorator <|-- ScalingLayerDecorator
     NeuralNetwork *-- "0..*" Connection
     Layer *-- "1..*" Neuron
     Neuron --> "1" ActivationFunction
@@ -48,7 +75,8 @@ classDiagram
     ActivationFunction <|.. Identity
     ActivationFunction <|.. Softmax
     ActivationFunction <|.. LegacyActivationAdapter
-    LegacyActivationAdapter --> AncienneFonctionTanh
+    LegacyActivationAdapter --> LegacyActivation
+    LegacyActivation <|.. AncienneFonctionTanh
     NeuralNetwork --> NetworkState
     NetworkState <|.. ConstructionState
     NetworkState <|.. TrainingState

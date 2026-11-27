@@ -1,7 +1,7 @@
 """Generate the report, UML figures, test summary and source ZIP.
 
 Run Maven verify first. This script never runs builds or contacts the network.
-Both assignment projects use this same standalone script.
+V2 report: biases, layer decorators and tested AspectJ application.
 """
 from __future__ import annotations
 
@@ -123,16 +123,17 @@ class Diagram:
 def diagrams():
     if not NEURAL:
         return
-    d = Diagram(1500, 1460, "UML — Modèle, activations et construction")
+    d = Diagram(1500, 1600, "UML V2 — Modèle, activations et construction")
     d.box((540, 90, 960, 295), "NeuralNetwork",
           ["- layers / connections", "+ train(...) / fit(...)", "+ predict(...) : double[]", "+ setActivation(...)"])
     d.box((40, 90, 440, 225), "NetworkBuilder", ["+ input / hidden / output", "+ build() : NeuralNetwork"])
     d.box((1080, 90, 1480, 225), "ActivationFactory", ["+ create(Type)", "Simple Factory"])
-    d.box((40, 400, 440, 535), "Layer", ["- type : LayerType", "- neurons : List<Neuron>"])
+    d.box((40, 400, 440, 535), "LayerComponent",
+          ["+ type() / neurons()", "+ activate / derivative"], interface=True)
     d.box((1040, 400, 1480, 570), "Connection",
           ["- weight : double [0,1]", "- source : Neuron", "- destination : Neuron"])
-    d.box((40, 695, 440, 865), "Neuron",
-          ["- index : int", "- incoming / outgoing", "- activation"])
+    d.box((40, 695, 440, 900), "Neuron",
+          ["- index : int", "- incoming / outgoing", "- activation", "- bias : double"])
     d.box((580, 735, 1080, 905), "ActivationFunction",
           ["+ activate(sums, index)", "+ derivative(sums, i, j)", "Contrat vectoriel"], interface=True)
     d.edge([(440, 155), (540, 155)], "construit", (445, 112), dashed=True)
@@ -142,7 +143,7 @@ def diagrams():
            "1 / 2..* couches", (235, 325), kind="composition")
     d.edge([(960, 245), (1000, 245), (1000, 460), (1040, 460)],
            "1 / 0..* connexions", (1060, 325), kind="composition")
-    d.edge([(240, 535), (240, 695)], "1 / 1..*", (255, 600), kind="composition")
+    d.edge([(240, 535), (240, 695)], "neurones : 1..*", (255, 600))
     d.edge([(440, 805), (580, 805)], "1", (495, 770))
     d.edge([(1260, 570), (1260, 635), (465, 635), (465, 740), (440, 740)],
            "source et destination : 1 chacune", (560, 595))
@@ -156,11 +157,39 @@ def diagrams():
         center = (rect[0]+rect[2])//2
         d.edge([(center, 1090), (center, 995), (830, 995), (830, 905)],
                kind="realize", dashed=True)
-    d.box((1040, 1330, 1480, 1450), "AncienneFonctionTanh", ["+ calculer / derivee"])
-    d.edge([(1260, 1230), (1260, 1330)], "adapte", (1280, 1260))
+    d.box((1040, 1310, 1480, 1430), "LegacyActivation",
+          ["+ calculer / derivee"], interface=True)
+    d.edge([(1260, 1230), (1260, 1310)], "adapte", (1280, 1245))
+    d.box((1040, 1490, 1480, 1590), "AncienneFonctionTanh", ["implémentation historique"])
+    d.edge([(1260, 1490), (1260, 1430)], kind="realize", dashed=True)
     d.draw.text((30, 1360), "Losange plein : composition. Triangle pointillé : réalisation.", font=d.small, fill=INK)
-    d.draw.text((30, 1400), "Multiplicités : réseau valide ; connexions entre couches consécutives.", font=d.small, fill=INK)
+    d.draw.text((30, 1400), "Layer concrète possède les neurones (voir Decorator).", font=d.small, fill=INK)
+    d.draw.text((30, 1440), "Connexions entre couches consécutives ; biais finis, poids [0,1].", font=d.small, fill=INK)
     d.save("classes-modele.png")
+
+    d = Diagram(1500, 1120, "UML V2 — Decorator : enrichissement dynamique de chaque couche")
+    d.box((400, 80, 1100, 280), "LayerComponent",
+          ["+ type() : LayerType", "+ neurons() : List<Neuron>",
+           "+ activate(sums) / derivative(sums,i,j)"], interface=True)
+    d.box((40, 440, 650, 640), "Layer",
+          ["- type : LayerType", "- neurons : List<Neuron>", "calcul des activations de base"])
+    d.box((850, 440, 1460, 640), "LayerDecorator",
+          ["- component : LayerComponent", "+ component()", "délégation (classe abstraite)"])
+    d.edge([(345, 440), (345, 340), (750, 340), (750, 280)], kind="realize", dashed=True)
+    d.edge([(1155, 440), (1155, 340), (750, 340), (750, 280)], kind="realize", dashed=True)
+    d.edge([(1460, 520), (1480, 520), (1480, 175), (1100, 175)],
+           "enveloppe : 1", (1210, 120))
+    d.box((40, 850, 680, 1050), "StatisticsLayerDecorator",
+          ["- statistics : Statistics", "+ activate() : compte / min / max / moyenne",
+           "gradient inchangé"])
+    d.box((830, 850, 1460, 1050), "ScalingLayerDecorator",
+          ["- factor : double", "+ activate() : factor * sortie",
+           "+ derivative() : factor * dérivée"])
+    d.edge([(360, 850), (360, 745), (1155, 745), (1155, 640)], kind="realize")
+    d.edge([(1145, 850), (1145, 745), (1155, 745), (1155, 640)], kind="realize")
+    d.draw.text((40, 1080), "Triangle : héritage ; pointillés : réalisation d'interface. Empilage sans copier les neurones.",
+                font=d.small, fill=INK)
+    d.save("classes-decorator.png")
 
     d = Diagram(1500, 800, "UML — State et Observer")
     d.box((40, 80, 470, 245), "NeuralNetwork",
@@ -211,7 +240,7 @@ def export_tests(allow_missing=False):
                for key in ("tests", "failures", "errors", "skipped")},
             "cases": [case.attrib["name"] for case in suite.findall("testcase")],
         })
-    expected = 31 if NEURAL else 15
+    expected = 53 if NEURAL else 15
     totals = {key: sum(s[key] for s in suites)
               for key in ("tests", "failures", "errors", "skipped")}
     if not allow_missing and (totals["tests"] != expected or any(
@@ -319,7 +348,7 @@ def report():
         canvas.line(54, height-32, width-54, height-32)
         canvas.setFont("Body", 8)
         canvas.setFillColor(colors.HexColor(INK))
-        label = "Examen • Réseau de neurones" if NEURAL else "Activité pratique • AspectJ et Spring AOP"
+        label = "Examen V2 • Réseau de neurones" if NEURAL else "Activité pratique • AspectJ et Spring AOP"
         canvas.drawString(54, 29, label)
         canvas.drawRightString(width-54, 29, str(doc.page))
         canvas.restoreState()
