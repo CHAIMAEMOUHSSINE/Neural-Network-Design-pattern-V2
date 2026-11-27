@@ -7,6 +7,7 @@ import chaimae.net.model.*;
 import chaimae.net.layer.StatisticsLayerDecorator;
 import chaimae.net.security.AuthenticationService;
 import chaimae.net.security.SecurityContext;
+import chaimae.net.security.User;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -23,6 +24,18 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AspectsTest {
+    @Test
+    void identiteValideSonContratEtCopieLesRoles() {
+        var roles = EnumSet.of(Role.READ);
+        var user = new User("lecteur", roles);
+        roles.add(Role.TRAIN);
+        assertEquals(Set.of(Role.READ), user.roles());
+        assertThrows(UnsupportedOperationException.class, () -> user.roles().add(Role.PREDICT));
+        assertThrows(NullPointerException.class, () -> new User(null, roles));
+        assertThrows(IllegalArgumentException.class, () -> new User("   ", roles));
+        assertThrows(NullPointerException.class, () -> new User("lecteur", null));
+    }
+
     @Test
     void auditDesactiveConserveResultatsEtExceptionsSansProduireDeMessages() {
         var network = build();
