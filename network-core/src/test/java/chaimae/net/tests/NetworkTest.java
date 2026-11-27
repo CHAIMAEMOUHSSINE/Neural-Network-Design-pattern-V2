@@ -14,6 +14,36 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class NetworkTest {
     @Test
+    void echantillonProtegeSesEntreesEtCiblesEtSignaleLesValeursAbsentes() {
+        double[] input = {0.2};
+        double[] target = {0.7};
+        var sample = new TrainingSample(input, target);
+        input[0] = 9;
+        target[0] = 9;
+        sample.input()[0] = 8;
+        sample.target()[0] = 8;
+        assertArrayEquals(new double[]{0.2}, sample.input());
+        assertArrayEquals(new double[]{0.7}, sample.target());
+        assertThrows(NullPointerException.class, () -> new TrainingSample(null, target));
+        assertThrows(NullPointerException.class, () -> new TrainingSample(input, null));
+    }
+
+    @Test
+    void unPasMultiSortieConserveLesGradientsDeChaqueCible() {
+        var network = new NetworkBuilder().input(1).output(2, Type.IDENTITY).build();
+        network.setWeight(0, 0.2);
+        network.setWeight(1, 0.4);
+        network.setBias(1, 0, 0.1);
+        network.setBias(1, 1, -0.1);
+        network.train(List.of(new TrainingSample(new double[]{0.5}, new double[]{0.3, -0.2})),
+                new TrainingOptions(1, 0.1));
+        assertEquals(0.205, network.connections().get(0).weight(), 1e-12);
+        assertEquals(0.385, network.connections().get(1).weight(), 1e-12);
+        assertEquals(0.11, network.layers().getLast().neurons().get(0).bias(), 1e-12);
+        assertEquals(-0.13, network.layers().getLast().neurons().get(1).bias(), 1e-12);
+    }
+
+    @Test
     void ordreDesCouchesEstValideSansMutationSurRejet() {
         var network = new NeuralNetwork();
         assertThrows(IllegalArgumentException.class,

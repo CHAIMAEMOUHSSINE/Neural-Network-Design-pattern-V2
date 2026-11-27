@@ -229,6 +229,7 @@ public final class NeuralNetwork {
 
     private void update(TrainingSample sample, double learningRate) {
         ForwardPass pass = forward(sample.input());
+        double[] target = sample.target();
         int last = layers.size() - 1;
         double[][] deltas = new double[layers.size()][];
         for (int layerIndex = last; layerIndex >= 1; layerIndex--) {
@@ -237,7 +238,7 @@ public final class NeuralNetwork {
             for (Neuron neuron : layer.neurons()) {
                 int index = neuron.index();
                 if (layerIndex == last) {
-                    outputGradient[index] = pass.values().getLast()[index] - sample.target()[index];
+                    outputGradient[index] = pass.values().getLast()[index] - target[index];
                 } else {
                     for (Connection connection : neuron.outgoing()) {
                         outputGradient[index] += connection.weight()
