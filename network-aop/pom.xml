@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent><groupId>fr.enset</groupId><artifactId>neural-network-examen</artifactId><version>1.0.0</version></parent>
+    <artifactId>network-aop</artifactId>
+    <dependencies>
+        <dependency><groupId>fr.enset</groupId><artifactId>network-core</artifactId><version>${project.version}</version></dependency>
+        <dependency><groupId>org.aspectj</groupId><artifactId>aspectjrt</artifactId><version>${aspectj.version}</version></dependency>
+        <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId><scope>test</scope></dependency>
+    </dependencies>
+    <build><plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+                <execution><id>default-compile</id><phase>none</phase></execution>
+                <execution><id>default-testCompile</id><phase>none</phase></execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId><artifactId>aspectj-maven-plugin</artifactId><version>1.15.0</version>
+            <configuration>
+                <complianceLevel>21</complianceLevel><source>21</source><target>21</target><encoding>UTF-8</encoding>
+                <weaveDependencies><weaveDependency><groupId>fr.enset</groupId><artifactId>network-core</artifactId></weaveDependency></weaveDependencies>
+            </configuration>
+            <executions><execution><goals><goal>compile</goal><goal>test-compile</goal></goals></execution></executions>
+            <dependencies><dependency><groupId>org.aspectj</groupId><artifactId>aspectjtools</artifactId><version>${aspectj.version}</version></dependency></dependencies>
+        </plugin>
+    </plugins></build>
+</project>

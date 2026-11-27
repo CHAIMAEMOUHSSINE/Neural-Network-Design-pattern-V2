@@ -1,0 +1,6 @@
+**/target/
+.idea/
+*.iml
+*.log*
+__pycache__/
+dist/*.zip

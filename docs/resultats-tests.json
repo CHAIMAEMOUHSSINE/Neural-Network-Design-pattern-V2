@@ -1,0 +1,73 @@
+{
+  "generated_at_utc": "2026-11-19T11:22:01.732269+00:00",
+  "note": "Local Surefire results, not a code coverage measurement.",
+  "totals": {
+    "tests": 31,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "suite": "fr.enset.nn.tests.AspectsTest",
+      "source": "network-aop/target/surefire-reports/TEST-fr.enset.nn.tests.AspectsTest.xml",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "lecteurNePeutNiConfigurerNiEntrainerNiPredire",
+        "utilisateurAnonymeNePeutPasConstruireNiLireLeReseau",
+        "administrateurExecuteEntrainementEtPrediction",
+        "toutesLesOperationsPubliquesDuReseauSontAnnotees",
+        "deconnexionEtIsolationEntreThreads",
+        "tracesAvantApresDureeErreurEtAbsenceDeMotDePasse",
+        "journalisationCouvreAussiLesMethodesPrivees",
+        "mauvaisMotDePasseEffaceLaSessionPrecedente"
+      ]
+    },
+    {
+      "suite": "fr.enset.nn.tests.ActivationTest",
+      "source": "network-core/target/surefire-reports/TEST-fr.enset.nn.tests.ActivationTest.xml",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "softmaxNormaliseSansDebordement",
+        "jacobienneSoftmaxCorrespondAuxDifferencesFinies(int)[1]",
+        "jacobienneSoftmaxCorrespondAuxDifferencesFinies(int)[2]",
+        "jacobienneSoftmaxCorrespondAuxDifferencesFinies(int)[3]",
+        "identityEtAdaptateurRespectentLeurContrat",
+        "fabriqueCreeLesQuatreStrategies",
+        "sigmoidUtiliseLaFormuleCorrigeeEtResteStable"
+      ]
+    },
+    {
+      "suite": "fr.enset.nn.tests.NetworkTest",
+      "source": "network-core/target/surefire-reports/TEST-fr.enset.nn.tests.NetworkTest.xml",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "rejetteLesPoidsHorsIntervalle(double)[1]",
+        "rejetteLesPoidsHorsIntervalle(double)[2]",
+        "rejetteLesPoidsHorsIntervalle(double)[3]",
+        "rejetteLesPoidsHorsIntervalle(double)[4]",
+        "etatsEtNotificationsInterdisentLesOperationsPendantTraining",
+        "refuseDonneesEtOptionsInvalidesAvantTransition",
+        "changerUneStrategieInvalideLeModeleEntraine",
+        "reseauCacheSoftmaxApprendEtNormaliseLaSortie",
+        "unePanneApresUneMiseAJourRestaureLesPoidsEtLetat",
+        "desabonnementEtIsolationDesObservateursDefaillants",
+        "echecNumeriqueDunReentrainementRestaureTrained",
+        "apprentissageReelReduitLaPerteEtApprendUneFonctionConnue",
+        "architectureEtSoftmaxMixteInvalides",
+        "propagationDonneLesSommesPondereesAttendues",
+        "protectionsDesCollectionsEtDesDonnees",
+        "architectureDeLaFigureContient25Connexions"
+      ]
+    }
+  ]
+}
