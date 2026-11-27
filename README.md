@@ -22,7 +22,9 @@ JDK **21 ou supérieur** et Internet au premier lancement. Le Maven Wrapper tél
 
 Sous Linux/macOS : `sh mvnw clean verify`.
 
-**53 tests passent** : 8 activations, 16 réseau, 9 biais, 10 décorateurs et 10 aspects. Ils couvrent aussi les gradients des décorateurs, les biais, la reprise sur panne et le refus des nouvelles mutations sans le rôle CONFIGURE.
+**64 tests passent** : 9 activations, 21 réseau, 9 biais, 12 décorateurs et 13 aspects. Ils couvrent les gradients, les biais, la reprise sur panne, les contrats de validation, les copies défensives et le contrôle des rôles.
+
+Le nettoyage conserve les patterns et les résultats d'apprentissage. Les tests de régression vérifient notamment les moyennes de valeurs finies extrêmes, les identités immuables et le fonctionnement du réseau avec l'audit désactivé. Les résultats détaillés sont produits dans les dossiers `target/surefire-reports/` des modules, ignorés par Git.
 
 ## Correspondance avec les consignes a–g
 
