@@ -6,9 +6,17 @@ Package Java : **`chaimae.net`**.
 
 ## Organisation
 
-- Modèle indépendant : `network-core/`.
-- Aspects de journalisation et sécurité : `network-aop/`.
-- Tests JUnit : `src/test/java/` dans chaque module.
+Un seul projet Maven, un seul `pom.xml` et un seul dossier `src/` :
+
+```text
+pom.xml
+src/
+  main/java/chaimae/net/        # Main, modele, patterns, aspects et securite
+  main/resources/             # Configuration de journalisation
+  test/java/chaimae/net/tests/ # Tous les tests JUnit
+```
+
+Les sous-packages Java organisent les classes au sein du même projet ; il n'y a plus de sous-modules Maven.
 
 Le dépôt publie le code, les tests et les fichiers Maven nécessaires. Les rapports, archives et outils locaux de génération ne sont pas suivis par Git.
 
@@ -24,7 +32,9 @@ Sous Linux/macOS : `sh mvnw clean verify`.
 
 **64 tests passent** : 9 activations, 21 réseau, 9 biais, 12 décorateurs et 13 aspects. Ils couvrent les gradients, les biais, la reprise sur panne, les contrats de validation, les copies défensives et le contrôle des rôles.
 
-Le nettoyage conserve les patterns et les résultats d'apprentissage. Les tests de régression vérifient notamment les moyennes de valeurs finies extrêmes, les identités immuables et le fonctionnement du réseau avec l'audit désactivé. Les résultats détaillés sont produits dans les dossiers `target/surefire-reports/` des modules, ignorés par Git.
+Le nettoyage conserve les patterns et les résultats d'apprentissage. Les tests de régression vérifient notamment les moyennes de valeurs finies extrêmes, les identités immuables et le fonctionnement du réseau avec l'audit désactivé. Les résultats détaillés sont produits dans `target/surefire-reports/`, ignoré par Git.
+
+Le modèle et les aspects sont compilés ensemble par AspectJ. Les tests numériques utilisent une identité administrateur de test ; les tests d'aspects vérifient séparément les accès anonymes et les rôles, sans désactiver la sécurité.
 
 ## Correspondance avec les consignes a–g
 
@@ -49,31 +59,17 @@ network.undecorateLayer(1); // retire l'enveloppe extérieure et invalide Traine
 
 Toutes les couches, y compris l'entrée, peuvent être décorées. Les décorateurs ne dupliquent pas les neurones. La mise à l'échelle adapte aussi les dérivées ; elle est refusée sur Softmax si son facteur diffère de 1. Toute reconfiguration demande un nouvel entraînement ; elle est interdite pendant Training.
 
-## Démonstrations
+## Lancer l'application
 
-Installer d'abord les deux modules dans le dépôt Maven local :
-
-```powershell
-.\mvnw.cmd install
-```
-
-Modèle sans aspects :
+Un seul point d'entrée : **`chaimae.net.Main`**. Aucune installation de modules dans le dépôt Maven local n'est nécessaire.
 
 ```powershell
-.\mvnw.cmd -pl network-core exec:java "-Dexec.mainClass=chaimae.net.demo.DemoModele"
+.\mvnw.cmd compile exec:java
 ```
 
-Scénario avec les véritables classes tissées par AspectJ :
+L'application démontre la topologie 3–5–2, les décorateurs, l'apprentissage des poids et biais, les notifications, puis les autorisations. Elle refuse l'utilisateur anonyme, autorise l'administrateur et refuse la prédiction au lecteur. Comptes **fictifs** `admin` / `lecteur`, mot de passe local `Demo-2027!`.
 
-```powershell
-.\mvnw.cmd -pl network-aop exec:java "-Dexec.mainClass=chaimae.net.demo.DemoSecurisee"
-```
-
-Cette seconde démonstration refuse un utilisateur anonyme, autorise l'administrateur, puis refuse la prédiction au lecteur. Comptes **fictifs** `admin` / `lecteur`, mot de passe local `Demo-2027!`.
-
-La démonstration sécurisée charge `logging.properties` avant son `main`. Les traces d'entrée/sortie, durée et échec sont au niveau JUL **FINE** dans `neural-network-audit-*.log*`, dans le répertoire courant. Les autres modes d'exécution doivent aussi activer ce niveau pour enregistrer l'audit détaillé.
-
-Le module `network-core` n'applique pas la sécurité : ses annotations sont inertes. Pour une exécution sécurisée, utiliser `network-aop`, et non le JAR non tissé.
+L'application charge `logging.properties` avant son `main`. Les traces d'entrée/sortie, durée et échec sont au niveau JUL **FINE** dans `neural-network-audit-*.log*`, dans le répertoire courant. Les journaux et sorties de compilation ne sont pas suivis par Git.
 
 ## Hypothèses de l'énoncé
 

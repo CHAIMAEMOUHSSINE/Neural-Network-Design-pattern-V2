@@ -10,7 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import static org.junit.jupiter.api.Assertions.*;
 
-class BiasTest {
+class BiasTest extends AuthenticatedNetworkTest {
     private NeuralNetwork network() {
         return new NetworkBuilder().input(1).output(1, Type.IDENTITY).build();
     }

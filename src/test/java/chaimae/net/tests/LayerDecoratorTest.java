@@ -8,7 +8,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-class LayerDecoratorTest {
+class LayerDecoratorTest extends AuthenticatedNetworkTest {
     @Test
     void moyenneStatistiqueResteFiniePourDesSortiesFiniesExtremes() {
         var network = new NetworkBuilder().input(1).output(3, Type.IDENTITY).build();

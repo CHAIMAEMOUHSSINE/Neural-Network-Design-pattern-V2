@@ -12,7 +12,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import static org.junit.jupiter.api.Assertions.*;
 
-class NetworkTest {
+class NetworkTest extends AuthenticatedNetworkTest {
     @Test
     void statistiquesDuDashboardSontDesInstantanesImmuables() {
         var dashboard = new Dashboard();
