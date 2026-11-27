@@ -25,6 +25,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AspectsTest {
     @Test
+    void inscriptionInvalideNeReservePasUnIdentifiant() {
+        assertThrows(IllegalArgumentException.class,
+                () -> auth.register("admin", PASSWORD, Set.of(Role.READ)));
+        assertThrows(IllegalArgumentException.class,
+                () -> auth.register("nouveau", "court".toCharArray(), Set.of(Role.READ)));
+        assertThrows(NullPointerException.class,
+                () -> auth.register("nouveau", PASSWORD, null));
+        auth.register("nouveau", PASSWORD, Set.of(Role.READ));
+        assertEquals(Set.of(Role.READ), auth.authenticate("nouveau", PASSWORD).roles());
+    }
+
+    @Test
     void identiteValideSonContratEtCopieLesRoles() {
         var roles = EnumSet.of(Role.READ);
         var user = new User("lecteur", roles);

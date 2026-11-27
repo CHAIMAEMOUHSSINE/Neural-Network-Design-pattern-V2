@@ -14,6 +14,11 @@ import javax.crypto.spec.PBEKeySpec;
 
 /** Comptes en mémoire. Inscription réservée au code de bootstrap de confiance. */
 public final class AuthenticationService {
+    private static final int SALT_BYTES = 16;
+    private static final int HASH_BITS = 256;
+    private static final int HASH_ITERATIONS = 210_000;
+    private static final int MIN_PASSWORD_LENGTH = 8;
+
     private record Account(User user, byte[] salt, byte[] hash) {
     }
 
@@ -23,19 +28,20 @@ public final class AuthenticationService {
     public void register(String username, char[] password, Set<Role> roles) {
         Objects.requireNonNull(username);
         Objects.requireNonNull(password);
-        if (username.isBlank() || password.length < 8 || accounts.containsKey(username)) {
+        if (username.isBlank() || password.length < MIN_PASSWORD_LENGTH || accounts.containsKey(username)) {
             throw new IllegalArgumentException("Identifiant unique et mot de passe d'au moins 8 caracteres requis.");
         }
-        byte[] salt = new byte[16];
+        User user = new User(username, roles);
+        byte[] salt = new byte[SALT_BYTES];
         random.nextBytes(salt);
-        accounts.put(username, new Account(new User(username, roles), salt, derive(password, salt)));
+        accounts.put(username, new Account(user, salt, derive(password, salt)));
     }
 
     public User authenticate(String username, char[] password) {
         SecurityContext.logout();
         Objects.requireNonNull(password);
         Account account = accounts.get(username);
-        byte[] candidate = derive(password, account == null ? new byte[16] : account.salt());
+        byte[] candidate = derive(password, account == null ? new byte[SALT_BYTES] : account.salt());
         try {
             if (account == null || !MessageDigest.isEqual(account.hash(), candidate)) {
                 throw new SecurityException("Identifiants incorrects.");
@@ -48,7 +54,7 @@ public final class AuthenticationService {
     }
 
     private static byte[] derive(char[] password, byte[] salt) {
-        PBEKeySpec spec = new PBEKeySpec(password, salt, 210_000, 256);
+        PBEKeySpec spec = new PBEKeySpec(password, salt, HASH_ITERATIONS, HASH_BITS);
         try {
             return SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256").generateSecret(spec).getEncoded();
         } catch (GeneralSecurityException e) {
