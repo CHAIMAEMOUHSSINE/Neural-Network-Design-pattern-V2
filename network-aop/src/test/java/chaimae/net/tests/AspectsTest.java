@@ -23,6 +23,19 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AspectsTest {
+    @Test
+    void auditDesactiveConserveResultatsEtExceptionsSansProduireDeMessages() {
+        var network = build();
+        messages.clear();
+        logger.setLevel(Level.OFF);
+        assertEquals(chaimae.net.state.NetworkState.Name.CONSTRUCTION, network.state());
+        assertThrows(IllegalStateException.class, () -> network.predict(new double[]{1}));
+        assertTrue(messages.isEmpty());
+        logger.setLevel(Level.FINE);
+        network.state();
+        assertTrue(messages.stream().anyMatch(s -> s.contains("NeuralNetwork.state") && s.contains("statut=OK")));
+    }
+
     private static final char[] PASSWORD = "Test-Only-2027!".toCharArray();
     private final Logger logger = Logger.getLogger("chaimae.net.audit");
     private final List<String> messages = new ArrayList<>();
