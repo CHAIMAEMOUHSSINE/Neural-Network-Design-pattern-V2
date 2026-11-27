@@ -2,7 +2,7 @@
 
 Solution Java du PDF **Examen Design Pattern V2** : réseau feed-forward avec **biais entraînables**, apprentissage réel, **Strategy, Adapter, State, Observer, Decorator**, complétés par **Builder** et **Simple Factory**.
 
-Cette version utilise le package **`chaimae.net`** et la branche [examen-v2](https://github.com/CHAIMAEMOUHSSINE/Neural-Network-design-patterns/tree/examen-v2). La version précédente publiée sur `main` reste inchangée.
+Cette version utilise le package **`chaimae.net`** et le dépôt dédié [Neural-Network-Design-pattern-V2](https://github.com/CHAIMAEMOUHSSINE/Neural-Network-Design-pattern-V2). La version précédente reste conservée dans son dépôt d'origine.
 
 ## Livrables
 
@@ -107,10 +107,11 @@ Faire d'abord `.\mvnw.cmd clean verify` pour inclure des résultats de tests à 
 
 ## Publication
 
+- Ce projet V2 : [Neural-Network-Design-pattern-V2](https://github.com/CHAIMAEMOUHSSINE/Neural-Network-Design-pattern-V2).
 - Dépôt d'origine (version antérieure) : [Neural-Network-design-patterns](https://github.com/CHAIMAEMOUHSSINE/Neural-Network-design-patterns).
 - Activité AOP séparée : [Aspect-oriented-Programming-demo-](https://github.com/CHAIMAEMOUHSSINE/Aspect-oriented-Programming-demo-).
 
-La [V2 est disponible sur sa branche dédiée](https://github.com/CHAIMAEMOUHSSINE/Neural-Network-design-patterns/tree/examen-v2). Ses PDF et ZIP sont disponibles dans `dist/`.
+Les PDF et ZIP de la V2 sont disponibles dans `dist/` sur la branche `main` du dépôt dédié.
 
 ## Limites
 

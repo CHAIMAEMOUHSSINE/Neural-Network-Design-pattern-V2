@@ -423,4 +423,4 @@ La solution sépare calcul, variations d'activation, contrôle du cycle de vie, 
 - Documentation Java 21 : https://docs.oracle.com/en/java/javase/21/
 - Documentation JUnit 5 : https://docs.junit.org/5.11.4/user-guide/
 
-Cette version utilise le package chaimae.net et la branche examen-v2 du dépôt Neural-Network-design-patterns. La version antérieure sur main et l'activité AOP ne sont pas remplacées. Le ZIP contient le code compilable complet, les tests, le rapport et les outils de génération.
+Cette version utilise le package chaimae.net et le dépôt dédié Neural-Network-Design-pattern-V2, branche main. Le dépôt de la version antérieure et l'activité AOP ne sont pas remplacés. Le ZIP contient le code compilable complet, les tests, le rapport et les outils de génération.
