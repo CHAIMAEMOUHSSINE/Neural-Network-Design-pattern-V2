@@ -14,6 +14,22 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class NetworkTest {
     @Test
+    void statistiquesDuDashboardSontDesInstantanesImmuables() {
+        var dashboard = new Dashboard();
+        var before = dashboard.statistics();
+        dashboard.onStateChange(new StateChange(Name.CONSTRUCTION, Name.TRAINING, "debut"));
+        var history = dashboard.events();
+        dashboard.onStateChange(new StateChange(Name.TRAINING, Name.TRAINED, "fin"));
+        assertEquals(0L, before.get(Name.TRAINING));
+        assertEquals(1L, dashboard.statistics().get(Name.TRAINING));
+        assertEquals(1L, dashboard.statistics().get(Name.TRAINED));
+        assertEquals(1, history.size());
+        assertThrows(UnsupportedOperationException.class, () -> dashboard.statistics().put(Name.TRAINED, 9L));
+        assertThrows(NullPointerException.class, () -> dashboard.onStateChange(null));
+        assertEquals(2, dashboard.events().size());
+    }
+
+    @Test
     void echantillonProtegeSesEntreesEtCiblesEtSignaleLesValeursAbsentes() {
         double[] input = {0.2};
         double[] target = {0.7};
